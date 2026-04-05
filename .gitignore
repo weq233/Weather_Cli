@@ -1,0 +1,45 @@
+# Go 编译产物
+weather-cli
+weather-cli.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试二进制文件
+*.test
+
+# 输出覆盖
+*.out
+
+# 依赖目录（如果使用 vendor）
+/vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+weather-cli.tar
+weather-cli.tar.gz
+
+# 数据目录
+data/
+
+# 日志
+*.log
+
+# 临时文件
+tmp/
+temp/
+
+# 配置文件(可选,如果不想提交默认配置)
+# config.json

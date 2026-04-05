@@ -1,0 +1,40 @@
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go 编译产物
+weather-cli
+weather-cli.exe
+*.exe
+
+# 文档
+README.md
+*.md
+
+# 脚本(不需要打包进镜像)
+deploy.ps1
+run.sh
+test-local.ps1
+fix-vmware-network.ps1
+setup-ssh-key.ps1
+
+# Docker 相关文件
+Dockerfile*
+docker-compose.yml
+.dockerignore
+
+# 其他
+Makefile
+crontab.sh
+.github/
+.githubworkflows/
