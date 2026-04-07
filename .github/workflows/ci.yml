@@ -11,6 +11,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # 强制使用 Node.js 24（消除 Node.js 20 弃用警告）
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # 测试和代码质量检查
@@ -21,9 +23,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.21'
+          cache: false  # 禁用 Go 模块缓存，避免缓存错误
 
       - name: Download dependencies
         run: go mod download
@@ -35,9 +38,10 @@ jobs:
         run: go test -v ./...
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: latest
+          args: --timeout=5m
 
   # 构建 Docker 镜像
   build:

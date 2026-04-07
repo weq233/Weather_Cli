@@ -1,0 +1,37 @@
+run:
+  timeout: 5m
+  issues-exit-code: 1
+
+linters:
+  disable-all: true
+  enable:
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+linters-settings:
+  gofmt:
+    simplify: true
+  
+  goimports:
+    local-prefixes: weather-cli
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  
+  # 排除一些常见的误报
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+    
+    # 允许未使用的变量在开发阶段存在
+    - linters:
+        - unused
+      text: "is unused"
