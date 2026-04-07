@@ -29,7 +29,7 @@ jobs:
         run: go mod download
 
       - name: Build
-        run: CGO_ENABLED=0 go build -ldflags="-w -s" -o weather-cli cmd/main.go
+        run: CGO_ENABLED=0 go build -ldflags="-w -s" -o weather-cli ./cmd
 
       - name: Test
         run: go test -v ./...
