@@ -1,5 +1,11 @@
 {
-  "api_host": "",
-  "api_key": "",
-  "timeout": 10
+  "api": {
+    "host": "从和风天气控制台获取的Host",
+    "key": "从和风天气控制台获取的Key",
+    "timeout": 10
+  },
+  "server": {
+    "port": 8080,
+    "mode": "release"
+  }
 }

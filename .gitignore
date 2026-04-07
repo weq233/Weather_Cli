@@ -41,5 +41,9 @@ data/
 tmp/
 temp/
 
-# 配置文件(可选,如果不想提交默认配置)
-# config.json
+# 部署包
+deploy.zip
+deploy-package/
+
+# 配置文件（包含敏感信息）
+config.json

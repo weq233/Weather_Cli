@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Weather API 服务
+  weather-api:
+    build: .
+    container_name: weather-api
+    environment:
+      - APP_MODE=api
+      - API_PORT=8080
+      - GIN_MODE=release
+      - TZ=Asia/Shanghai
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.json:/app/config.json:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - weather-network
+
+  # Weather CLI (一次性任务示例)
+  weather-cli:
+    build: .
+    container_name: weather-cli
+    environment:
+      - APP_MODE=cli
+      - WEATHER_CITY=北京
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./config.json:/app/config.json:ro
+    profiles:
+      - cli  # 使用 docker-compose --profile cli up 启动
+    networks:
+      - weather-network
+
+networks:
+  weather-network:
+    driver: bridge

@@ -1,395 +1,296 @@
-# Weather CLI 🌤️
+---
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey)]()
+## ✨ 特性
 
-一个基于 Go 语言的轻量级命令行天气查询工具,支持 Docker 容器化部署和多平台运行。
-
-## 📋 目录
-
-- [项目简介](#项目简介)
-- [快速开始](#快速开始)
-- [环境要求](#环境要求)
-- [构建与部署](#构建与部署)
-- [配置说明](#配置说明)
-- [使用示例](#使用示例)
-- [故障排查](#故障排查)
+- 🖥️ **CLI 工具** - 命令行快速查询天气
+- 🌐 **REST API** - 标准的 HTTP API 接口
+- 📱 **移动端 App** - Flutter 跨平台应用（iOS/Android）
+- 🐳 **容器化** - Docker 一键部署
+- 🔧 **灵活配置** - 支持配置文件、环境变量、命令行参数
+- 🚀 **跨平台** - Windows 开发，Linux 部署
 
 ---
 
-## 项目简介
+## 📚 文档导航
 
-Weather CLI 是一个基于 Go 语言的命令行天气查询工具,使用和风天气 API 提供实时天气数据。支持容器化部署,实现"开箱即用"的体验。
+### 🎯 快速开始
 
-**核心特性:**
-- ✅ 跨平台支持 (Windows 开发 → Linux 运行)
-- ✅ 容器化部署 (Docker)
-- ✅ 配置文件管理 (config.json)
-- ✅ 多层级配置优先级
-- ✅ 简洁的命令行界面
+- **[⚙️ 配置指南](docs/CONFIG_GUIDE.md)** - 3 步完成配置（必读）
 
----
+### 💻 开发文档
 
-## 快速开始
+- **[💻 系统要求](docs/SYSTEM_REQUIREMENTS.md)** - 硬件和软件要求
+- **[🌐 API 文档](docs/API_USAGE.md)** - REST API 接口说明
+- **[🔑 Git 配置](docs/GIT_SETUP_GUIDE.md)** - 版本控制配置
 
-### 方式 1: 直接使用容器(推荐)
+### 🚀 部署运维
 
-```bash
-# 在已安装 Docker 的 Debian 上执行
-docker run --rm weather-cli:latest --city Beijing
-```
+- **[🚀 部署指南](docs/DEPLOY_GUIDE.md)** - Windows → Linux 服务器部署
 
-### 方式 2: 创建便捷命令
+### 📱 移动端
 
-```bash
-# 创建全局命令
-sudo tee /usr/local/bin/weather > /dev/null << 'EOF'
-#!/bin/bash
-docker run --rm --entrypoint ./weather-cli weather-cli:latest "$@"
-EOF
+- **[📱 快速开始](mobile/QUICK_START.md)** - 5 分钟运行移动应用
+- **[🔧 Flutter 安装](mobile/FLUTTER_INSTALL_GUIDE.md)** - Flutter SDK 安装
 
-sudo chmod +x /usr/local/bin/weather
-
-# 使用
-weather --city Beijing
-weather --city Shanghai
-```
+📚 **查看全部文档**: [docs/README.md](docs/README.md)
 
 ---
 
-## 环境要求
+## 🏗️ 项目结构
 
-### 开发环境 (Windows)
-- Windows 10/11
-- PowerShell 5.1+ 或 PowerShell Core
-- Go 1.21+
-- Git
-
-### 运行环境 (Debian/Linux)
-- Debian 13 (或其他 Linux 发行版)
-- Docker 20.10+
-- 网络连接(访问和风天气 API)
-
----
-
-## 构建与部署
-
-### 步骤 1: 准备源代码
-
-在 **Windows** 上打包源代码:
-
-```powershell
-cd "C:\Users\weq233\Desktop\代码\Weather_Cli"
-
-# 压缩必要文件
-Compress-Archive -Path cmd,config.json,Dockerfile,.dockerignore,go.mod,go.sum `
-  -DestinationPath weather-cli-src.zip -Force
-
-# 上传到 Debian
-scp .\weather-cli-src.zip weq@10.17.8.200:/home/weq/
 ```
-
-### 步骤 2: 在 Debian 上构建镜像
-
-SSH 连接到 Debian 并执行:
-
-```bash
-# 连接
-ssh 你的linux用户名称@linux的IP地址
-
-# 切换到 root (或使用 sudo)
-su root
-
-# 解压源码
-unzip /home/weq/weather-cli-src.zip -d /home/weq/weather-cli-build
-cd /home/weq/weather-cli-build
-
-# 构建 Docker 镜像
-docker build -t weather-cli:latest .
-```
-
-**构建过程说明:**
-1. **第一阶段 (builder)**: 使用 `golang:1.21-alpine` 编译 Go 程序
-   - 配置国内 Go 模块代理 (`GOPROXY=https://goproxy.cn`)
-   - 交叉编译为 Linux AMD64 二进制文件
-   
-2. **第二阶段 (runtime)**: 使用 `alpine:latest` 作为运行环境
-   - 安装必要的 CA 证书和 Bash
-   - 复制编译好的二进制和配置文件
-   - 设置默认入口点
-
-### 步骤 3: 验证构建
-
-```bash
-# 检查镜像
-docker images | grep weather-cli
-
-# 测试运行
-docker run --rm weather-cli:latest --city Beijing
-
-# 进入容器调试
-docker run --rm --entrypoint bash weather-cli:latest -i -t
+Weather_Cli/
+├── docs/                    # 📚 文档中心
+│   ├── README.md           # 文档索引
+│   ├── CONFIG_GUIDE.md     # 配置指南
+│   ├── DEPLOY_GUIDE.md     # 部署指南
+│   ├── API_USAGE.md        # API 文档
+│   ├── SYSTEM_REQUIREMENTS.md  # 系统要求
+│   └── GIT_SETUP_GUIDE.md  # Git 配置
+│
+├── cmd/                     # 🚀 CLI 命令行工具
+│   ├── main.go
+│   └── root.go
+│
+├── api/                     # 🌐 API 服务
+│   ├── server.go
+│   ├── handlers.go
+│   └── routes.go
+│
+├── internal/                # 🔧 核心业务逻辑
+│   ├── config/             # 配置管理
+│   └── weather/            # 天气查询
+│
+├── mobile/                  # 📱 移动端应用
+│   └── weather_app/        # Flutter 项目
+│
+├── config.json              # 配置文件
+├── Dockerfile               # Docker 构建文件
+├── docker-compose.yml       # Docker Compose 配置
+└── Makefile                 # 自动化构建脚本
 ```
 
 ---
 
-## 配置说明
+## 🚀 快速开始
 
-### 配置文件 (config.json)
+### 1️⃣ 配置 API Key
 
-程序会自动读取运行目录下的 `config.json`:
+创建并编辑 `config.json`：
+
+``powershell
+# Windows - 创建配置文件
+notepad config.json
+```
+
+**必须修改以下两项：**
 
 ```json
 {
-  "api_host": "和风天气 API Host",
-  "api_key": "和风天气 API Key",
-  "timeout": 10
+  "api": {
+    "host": "从和风天气控制台获取",  // ⚠️ 必须修改
+    "key": "从和风天气控制台获取",   // ⚠️ 必须修改
+    "timeout": 10
+  },
+  "server": {
+    "port": 8080,
+    "mode": "release"
+  }
 }
 ```
 
-**配置项说明:**
-- `api_host`: 和风天气 API Host (从控制台获取)
-- `api_key`: 和风天气 API Key (32位十六进制字符串)
-- `timeout`: HTTP 请求超时时间(秒)
-
-### 配置优先级
-
-配置加载顺序(从高到低):
-1. **命令行参数**: `--api-key`, `--api-host`
-2. **环境变量**: `WEATHER_API_KEY`, `WEATHER_API_HOST`
-3. **配置文件**: `config.json`
-4. **代码默认值**: 内置的默认配置
-
-### 修改配置
-
-#### 方式 1: 编辑配置文件(推荐)
-
-```bash
-# 在 Debian 上编辑
-nano config.json
-
-# 修改后重新构建镜像
-docker build -t weather-cli:latest .
-```
-
-#### 方式 2: 使用环境变量
-
-```bash
-docker run --rm \
-  -e WEATHER_API_KEY="your_new_key" \
-  -e WEATHER_API_HOST="your_host.qweatherapi.com" \
-  weather-cli:latest --city Beijing
-```
-
-#### 方式 3: 使用命令行参数
-
-```bash
-docker run --rm weather-cli:latest \
-  --api-key your_new_key \
-  --city Beijing
-```
-
----
-
-## 使用示例
-
-### 基本用法
-
-```bash
-# 查询城市天气
-weather --city Beijing
-weather --city Shanghai
-weather --city Guangzhou
-
-# 使用演示模式(无需 API Key)
-weather --city Beijing --api-key demo
-```
-
-### 高级用法
-
-```bash
-# 查看帮助
-weather --help
-
-# 查看版本
-weather version
-
-# 查看配置信息
-weather config
-```
-
-### 批量查询
-
-```bash
-# 查询多个城市
-for city in Beijing Shanghai Guangzhou Shenzhen; do
-  echo "=== $city ==="
-  weather --city $city
-  echo ""
-done
-```
-
----
-
-## 故障排查
-
-### 问题 1: Docker 权限不足
-
-**错误信息:**
-```
-permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
-```
-
-**解决方案:**
-```bash
-# 将用户添加到 docker 组
-sudo usermod -aG docker $USER
-
-# 刷新用户组(或重新登录)
-newgrp docker
-
-# 验证
-docker info
-```
-
-### 问题 2: 构建时网络超时
-
-**错误信息:**
-```
-dial tcp 142.250.73.145:443: i/o timeout
-```
-
-**原因:** 无法访问 Go 模块代理
-
-**解决方案:** Dockerfile 已配置国内代理,确保使用最新版本的 Dockerfile:
-```dockerfile
-ENV GOPROXY=https://goproxy.cn,https://proxy.golang.org,direct
-```
-
-### 问题 3: API 返回 404
-
-**错误信息:**
-```
-Error: API 返回错误，code: 404
-```
-
-**可能原因:**
-1. API Key 无效或过期
-2. API Host 配置错误
-3. GeoAPI 路径未包含 `/geo/` 前缀
-
-**解决方案:**
-```bash
-# 1. 验证 API Key 和 Host
-curl -v --compressed \
-  -H "X-QW-Api-Key: f694dcb7ce394ffe93408aa83f92a54e" \
-  "https://p54nmuk5rq.re.qweatherapi.com/geo/v2/city/lookup?location=Beijing"
-
-# 2. 检查 config.json
-cat config.json
-
-# 3. 获取新的 API Key
-# 访问 https://console.qweather.com/ 创建新项目
-```
-
-### 问题 4: 配置文件未加载
-
-**错误信息:**
-```
-Error: 请提供 API Key (--api-key 或 WEATHER_API_KEY 环境变量)
-```
-
-**原因:** 容器内找不到 config.json
-
-**解决方案:**
-```bash
-# 1. 检查容器内是否有配置文件
-docker run --rm --entrypoint bash weather-cli:latest -c "ls -l /app/"
-
-# 2. 手动挂载配置文件
-docker run --rm \
-  -v /path/to/config.json:/app/config.json \
-  weather-cli:latest --city Beijing
-
-# 3. 确保 Dockerfile 中有 COPY config.json
-grep "COPY config.json" Dockerfile
-```
-
-### 问题 5: 容器内无法调试
-
-**问题:** 无法使用 `docker run ... sh` 进入容器
-
-**解决方案:** 使用 `--entrypoint` 覆盖默认入口点:
-```bash
-# 进入交互式 Shell
-docker run --rm --entrypoint bash weather-cli:latest -i -t
-
-# 执行单条命令
-docker run --rm --entrypoint bash weather-cli:latest -c "cat /app/config.json"
-```
-
----
-
-## 获取 API Key
-
-1. 访问 [和风天气控制台](https://console.qweather.com/)
+**如何获取 Host 和 Key：**
+1. 访问 https://console.qweather.com/
 2. 注册/登录账号
 3. 创建新项目
-4. 选择 "Web API" + "开发版(免费)"
-5. 复制 API Key 和 API Host
-6. 更新 `config.json`
+4. 在项目中找到 **Host** 和 **Key**
+5. 复制到配置文件中
 
-**注意:** 
-- 开发版免费版每日限额 1000 次调用
-- API Host 格式: `xxx.xxx.qweatherapi.com`
-- GeoAPI 路径需添加 `/geo/` 前缀
+### 2️⃣ 使用 CLI
 
----
-
-## 项目结构
-
-```
-weather-cli/
-├── cmd/
-│   ├── main.go          # 程序入口
-│   └── root.go          # CLI 命令定义
-├── config.json           # API 配置文件
-├── Dockerfile            # Docker 构建文件
-├── .dockerignore         # Docker 排除文件
-├── go.mod                # Go 模块依赖
-├── go.sum                # 依赖校验文件
-└── README.md             # 项目文档
-```
-
----
-
-## 许可证
-
-MIT License
-
----
-
-## 常见问题 (FAQ)
-
-### Q: 如何更新 API Key?
-A: 编辑 `config.json`,然后重新构建镜像:
 ```bash
-nano config.json
+# 编译
+go build -o weather-cli.exe ./cmd
+
+# 查询天气
+./weather-cli.exe --city 北京
+```
+
+### 3️⃣ 启动 API 服务
+
+```bash
+# 编译 API
+go build -o weather-api.exe ./api
+
+# 启动服务
+./weather-api.exe
+
+# 访问 API
+curl http://localhost:8080/api/weather?city=北京
+```
+
+### 4️⃣ Docker 部署
+
+```bash
+# 构建镜像
 docker build -t weather-cli:latest .
+
+# 运行容器
+docker run -p 8080:8080 weather-cli:latest
 ```
-
-### Q: 可以在没有 Docker 的环境下运行吗?
-A: 可以,直接编译二进制文件:
-```bash
-GOOS=linux GOARCH=amd64 go build -o weather-cli ./cmd
-./weather-cli --city Beijing
-```
-
-
-### Q: 支持哪些城市?
-A: 支持和风天气 API 支持的所有城市,包括中文和英文城市名。
 
 ---
 
+## 📱 移动端应用
+
+完整的 Flutter 跨平台移动应用（iOS/Android）：
+
+### 快速开始（5 分钟）
+
+**⚠️ 前置要求：**
+- 确保至少 **10 GB** 可用磁盘空间
+- 已安装 [Flutter SDK](mobile/FLUTTER_INSTALL_GUIDE.md)
+
+```bash
+# 1. 启动 API 服务
+go build -o weather-api.exe ./api && ./weather-api.exe
+
+# 2. 进入移动端目录
+cd mobile/weather_app
+
+# 3. 安装依赖
+flutter pub get
+
+# 4. 运行应用（自动检测 Flutter）
+flutter run
+
+# 或使用智能启动脚本（推荐）
+cd ../..
+.\mobile\run-app.ps1  # Windows
+./mobile/run-app.sh   # Linux/Mac
+```
+
+📖 **详细文档**: 
+- [⚡ 快速开始](mobile/QUICK_START.md) - 5 分钟上手（含磁盘空间检查）
+- [📘 开发指南](mobile/MOBILE_DEV_GUIDE.md) - 完整教程
+- [🔧 Flutter 安装](mobile/FLUTTER_INSTALL_GUIDE.md) - 详细的安装指南
+
+---
+
+## 🔧 常用命令
+
+```bash
+# 编译
+make build
+
+# 运行 CLI
+make run
+
+# 启动 API
+make run-api
+
+# Docker 构建
+make docker-build
+
+# 清理
+make clean
+```
+
+查看所有命令: `make help`
+
+---
+
+## 🌐 API 端点
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/health` | GET | 健康检查 |
+| `/api/weather?city=北京` | GET | 查询天气 |
+| `/api/version` | GET | 版本信息 |
+
+📖 完整 API 文档: [API_USAGE.md](docs/API_USAGE.md)
+
+---
+
+## 🚀 部署到 Linux 服务器
+
+项目支持从 Windows 编译打包，通过 SSH 上传到 Linux 服务器进行容器化部署。
+
+### 快速部署流程
+
+**Windows 端：**
+```powershell
+# 1. 编译
+go build -ldflags="-w -s" -o weather-api.exe ./api
+
+# 2. 打包
+Compress-Archive -Path weather-api.exe,config.json,Dockerfile,docker-compose.yml,Makefile,.dockerignore -DestinationPath deploy.zip -Force
+
+# 3. 上传（替换为你的服务器 IP）
+scp deploy.zip root@YOUR_SERVER_IP:/opt/weather-cli/
+```
+
+**Linux 服务器端：**
+```bash
+# 1. 登录并解压
+ssh root@YOUR_SERVER_IP
+cd /opt/weather-cli
+unzip deploy.zip
+
+# 2. 构建并启动
+docker build -t weather-cli:latest .
+docker-compose up -d
+
+# 3. 验证
+curl http://localhost:8080/api/health
+```
+
+📖 详细文档: [部署指南](docs/DEPLOY_GUIDE.md)
+
+---
+
+## 📖 更多文档
+
+所有文档已整理到 [`docs/`](docs/) 目录：
+
+- ⚙️ [配置指南](docs/CONFIG_GUIDE.md) - 完整的配置说明
+- 🚀 [部署指南](docs/DEPLOY_GUIDE.md) - 服务器部署
+- 🌐 [API 文档](docs/API_USAGE.md) - 接口说明
+- 💻 [系统要求](docs/SYSTEM_REQUIREMENTS.md) - 硬件和软件要求
+- 📱 [移动端开发](mobile/MOBILE_DEV_GUIDE.md) - Flutter 应用
+- 🔑 [Git 配置](docs/GIT_SETUP_GUIDE.md) - 版本控制
+
+📚 **查看全部文档**: [docs/README.md](docs/README.md)
+
+---
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+📖 开发指南: [Git 配置](docs/GIT_SETUP_GUIDE.md)
+
+---
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+---
+
+## 🙏 致谢
+
+- [和风天气](https://www.qweather.com/) - 提供天气数据 API
+- [Cobra](https://github.com/spf13/cobra) - CLI 框架
+- [Gin](https://github.com/gin-gonic/gin) - Web 框架
+- [Flutter](https://flutter.dev/) - 跨平台移动开发
+
+---
+
+**⭐ 如果这个项目对你有帮助，请给个 Star！**
